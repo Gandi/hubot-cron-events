@@ -31,19 +31,42 @@ module.exports = (robot) ->
     'cron ([^ ]+) ' +
     '([-/0-9\*,]+ [-/0-9\*,]+ [-/0-9\*,]+ [-/0-9\*,]+ [-/0-9\*,]+(?: [-/0-9\*,]+)?)' +
     ' ([^ ]+)(?: ([^ ]+))?$')
-    , (res) ->
-      name = res.match[1]
-      period = res.match[2]
-      eventName = res.match[3]
-      tz = res.match[4]
-      cron.addJob name, period, eventName, tz, (so) ->
-        if so.error?
-          res.send so.error
-        else
-          res.send "The job #{name} is created. It will stay paused until you start it."
+  , (res) ->
+    name = res.match[1]
+    period = res.match[2]
+    eventName = res.match[3]
+    tz = res.match[4]
+    cron.addJob name, period, eventName, tz, (so) ->
+      if so.error?
+        res.send so.error
+      else
+        res.send "The job #{name} is created. It will stay paused until you start it."
+    res.finish()
 
   #   hubot cron start <name>
+  robot.respond /cron start ([^ ]+)$/, (res) ->
+    name = res.match[1]
+    res.finish()
+
   #   hubot cron stop <name>
+  robot.respond /cron stop ([^ ]+)$/, (res) ->
+    name = res.match[1]
+    res.finish()
+
   #   hubot cron delete <name>
+  robot.respond /cron delete ([^ ]+)$/, (res) ->
+    name = res.match[1]
+    res.finish()
+    
   #   hubot cron <name> <key> <value>
+  robot.respond /cron ([^ ]+) ([^ ]+) (.+)$/, (res) ->
+    name = res.match[1]
+    key = res.match[2]
+    value = res.match[3]
+    res.finish()
+
   #   hubot cron <name> drop <key>
+  robot.respond /cron ([^ ]+) drop ([^ ]+)$/, (res) ->
+    name = res.match[1]
+    key = res.match[2]
+    res.finish()
