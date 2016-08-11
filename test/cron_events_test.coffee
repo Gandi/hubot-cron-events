@@ -37,3 +37,11 @@ describe 'cron_events module', ->
         expect(hubotResponse()).
           to.match /hubot-cron-events module is version [0-9]+\.[0-9]+\.[0-9]+/
         expect(hubotResponseCount()).to.eql 1
+
+  # ---------------------------------------------------------------------------------
+  context 'user adds a new job', ->
+
+    context 'with an invalid period', ->
+      hubot 'cron somejob 80 80 80 80 80 some.event'
+      it 'should complain about the period syntax', ->
+        expect(hubotResponse()).to.eql "Sorry, '80 80 80 80 80' is not a valid pattern."
