@@ -13,7 +13,6 @@
 #   mose
 
 CronJob = require('cron').CronJob
-CronTime = require('cron').CronTime
 
 class CronEvents
 
@@ -44,10 +43,6 @@ class CronEvents
 
   addJob: (name, period, eventName, tz, cb) ->
     if @_valid period, tz
-      if tz? 
-        unless @_validtz tz
-          cb { message: "Sorry, '#{tz}' is not a valid Timezone." }
-          return
       @data[name] = {
         cronTime: period,
         eventName: eventName,
@@ -117,9 +112,10 @@ class CronEvents
 
   _valid: (period, tz) ->
     try
-      CronTime period, tz
+      new CronJob period, ( -> { }), null, null, tz
       return true
     catch e
+      @robot.logger.error e
       return false
 
 

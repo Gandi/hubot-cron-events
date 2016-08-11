@@ -47,6 +47,12 @@ describe 'cron_events module', ->
   context 'user adds a new job', ->
 
     context 'with an invalid period', ->
-      hubot 'cron somejob 80 80 80 80 80 some.event'
+      hubot 'cron somejob 80 // 80 80 80 some.event'
       it 'should complain about the period syntax', ->
-        expect(hubotResponse()).to.eql "Sorry, '80 80 80 80 80' is not a valid pattern."
+        expect(hubotResponse()).to.eql "Sorry, '80 // 80 80 80' is not a valid pattern."
+
+    context 'with a valid period', ->
+      hubot 'cron somejob * * * * * some.event'
+      it 'should not complain about the period syntax', ->
+        expect(hubotResponse()).
+          to.eql "The job somejob is created. It will stay paused until you start it."
