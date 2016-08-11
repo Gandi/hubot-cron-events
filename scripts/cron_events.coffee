@@ -27,7 +27,11 @@ module.exports = (robot) ->
     res.finish()
 
   #   hubot cron <name> <period> <event> [<tz>]
-  robot.respond /cron ([^ ]+) ([-/0-9\*,]+ [-/0-9\*,]+ [-/0-9\*,]+ [-/0-9\*,]+ [-/0-9\*,]+(?: [-/0-9\*,]+)?) ([^ ]+)(?: ([^ ]+))?$/, (res) ->
+  robot.respond new RegExp(
+    'cron ([^ ]+) ' +
+    '([-/0-9\*,]+ [-/0-9\*,]+ [-/0-9\*,]+ [-/0-9\*,]+ [-/0-9\*,]+(?: [-/0-9\*,]+)?)' +
+    ' ([^ ]+)(?: ([^ ]+))?$')
+    , (res) ->
       name = res.match[1]
       period = res.match[2]
       eventName = res.match[3]

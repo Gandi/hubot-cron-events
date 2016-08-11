@@ -30,18 +30,19 @@ class CronEvents
       @jobs[name].start()
 
   loadJob: (job) ->
-    params =
+    params = {
       cronTime: job.cronTime
       start: false
       onTick: ->
         @robot.emit job.eventName, job.eventData
+    }
     if job.tz?
       params.tz = job.tz
     return new CronJob(params)
 
   addJob: (name, period, eventName, tz, cb) ->
     if @valid(period)?
-      cb { message: "ok" }
+      cb { message: 'ok' }
     else
       cb { error: "Sorry, '#{period}' is not a valid pattern." }
 
