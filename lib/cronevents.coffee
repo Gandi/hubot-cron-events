@@ -13,6 +13,7 @@
 #   mose
 
 CronJob = require('cron').CronJob
+CronTime = require('cron').CronTime
 
 class CronEvents
 
@@ -27,7 +28,8 @@ class CronEvents
   loadAll: ->
     for name, job of @data
       @jobs[name] = @loadJob job
-      @jobs[name].start()
+      if job.started?
+        @jobs[name].start()
 
   loadJob: (job) ->
     params = {
@@ -41,13 +43,84 @@ class CronEvents
     return new CronJob(params)
 
   addJob: (name, period, eventName, tz, cb) ->
-    if @valid(period)?
-      cb { message: 'ok' }
+    if @_valid period, tz
+      if tz? 
+        unless @_validtz tz
+          cb { message: "Sorry, '#{tz}' is not a valid Timezone." }
+          return
+      @data[name] = {
+        cronTime: period,
+        eventName: eventName,
+        eventData: { },
+        started: false,
+        tz: tz
+      }
+      cb { message: "The job #{name} is created. It will stay paused until you start it." }
     else
-      cb { error: "Sorry, '#{period}' is not a valid pattern." }
+      cb { message: "Sorry, '#{period}' is not a valid pattern." }
 
-  valid: (period) ->
-    null
+  startJob: (name, cb) ->
+    if @data[name]?
+      @_start name
+      cb { message: "The job #{name} is now in service." }
+    else
+      cb { message: "startJob: There is no such job named #{name}" }
+
+  stopJob: (name, cb) ->
+    if @data[name]?
+      @_stop name
+      cb { message: "The job #{name} is now paused." }
+    else
+      cb { message: "stopJob: There is no such job named #{name}" }
+
+  deleteJob: (name, cb) ->
+    if @data[name]?
+      delete @data[name]
+      if @job[name]?
+        @jobs[name].stop()
+        delete @jobs[name]
+      cb { message: "The job #{name} is deleted." }
+    else
+      cb { message: "deleteJob: There is no such job named #{name}" }
+
+  addData: (name, key, value, cb) ->
+    if @data[name]?
+      @data[name].eventData[key] = value
+      if @job[name]?
+        @_stop name
+        @_start name
+      cb { message: "The key #{key} is now defined for job #{name}." }
+    else
+      cb { message: "addData: There is no such job named #{name}" }
+
+  dropData: (name, key, cb) ->
+    if @data[name]?
+      if @data[name].eventData[key]?
+        delete @data[name].eventData[key]
+      if @job[name]?
+        @_stop name
+        @_start name     
+      cb { message: "The key #{key} is now removed from job #{name}." }
+    else
+      cb { message: "dropData: There is no such job named #{name}" }
+
+  _start: (name) ->
+    @jobs[name] = @loadJob @data[name]
+    @jobs[name].start()
+    @data[name].started = true
+
+  _stop: (name) ->
+    if @job[name]?
+      @jobs[name].stop()
+      delete @jobs[name]
+    @data[name].started = false
+
+  _valid: (period, tz) ->
+    try
+      CronTime period, tz
+      return true
+    catch e
+      return false
 
 
 

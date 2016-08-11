@@ -37,36 +37,43 @@ module.exports = (robot) ->
     eventName = res.match[3]
     tz = res.match[4]
     cron.addJob name, period, eventName, tz, (so) ->
-      if so.error?
-        res.send so.error
-      else
-        res.send "The job #{name} is created. It will stay paused until you start it."
+      res.send so.message
     res.finish()
 
   #   hubot cron start <name>
   robot.respond /cron start ([^ ]+)$/, (res) ->
     name = res.match[1]
+    cron.startJob name, (so) ->
+      res.send so.message
     res.finish()
 
   #   hubot cron stop <name>
   robot.respond /cron stop ([^ ]+)$/, (res) ->
     name = res.match[1]
+    cron.stopJob name, (so) ->
+      res.send so.message
     res.finish()
 
   #   hubot cron delete <name>
   robot.respond /cron delete ([^ ]+)$/, (res) ->
     name = res.match[1]
+    cron.deleteJob name, (so) ->
+      res.send so.message
     res.finish()
     
   #   hubot cron <name> <key> <value>
-  robot.respond /cron ([^ ]+) ([^ ]+) (.+)$/, (res) ->
+  robot.respond /cron ([^ ]+) ([^ ]+) = (.+)$/, (res) ->
     name = res.match[1]
     key = res.match[2]
     value = res.match[3]
+    cron.addData name, key, value, (so) ->
+      res.send so.message
     res.finish()
 
   #   hubot cron <name> drop <key>
   robot.respond /cron ([^ ]+) drop ([^ ]+)$/, (res) ->
     name = res.match[1]
     key = res.match[2]
+    cron.dropData name, key, (so) ->
+      res.send so.message
     res.finish()

@@ -1,3 +1,8 @@
+require('source-map-support').install {
+  handleUncaughtExceptions: false,
+  environment: 'node'
+}
+
 require('es6-promise').polyfill()
 
 Helper = require('hubot-test-helper')
