@@ -11,7 +11,7 @@ Helper = require('hubot-test-helper')
 helper = new Helper('../scripts/cron_events.coffee')
 
 # path   = require 'path'
-# sinon  = require 'sinon'
+sinon  = require 'sinon'
 expect = require('chai').use(require('sinon-chai')).expect
 
 room = null
@@ -32,6 +32,7 @@ describe 'cron_events module', ->
 
   beforeEach ->
     room = helper.createRoom { httpd: false }
+    room.robot.logger.error = sinon.stub()
 
   # ---------------------------------------------------------------------------------
   context 'user wants to know hubot-cron-events version', ->
@@ -50,9 +51,11 @@ describe 'cron_events module', ->
       hubot 'cron somejob 80 // 80 80 80 some.event'
       it 'should complain about the period syntax', ->
         expect(hubotResponse()).to.eql "Sorry, '80 // 80 80 80' is not a valid pattern."
+      it 'should log an error', ->
+        expect(room.robot.logger.error).calledOnce
 
     context 'with a valid period', ->
       hubot 'cron somejob * * * * * some.event'
       it 'should not complain about the period syntax', ->
         expect(hubotResponse()).
-          to.eql "The job somejob is created. It will stay paused until you start it."
+          to.eql 'The job somejob is created. It will stay paused until you start it.'

@@ -94,7 +94,7 @@ class CronEvents
         delete @data[name].eventData[key]
       if @job[name]?
         @_stop name
-        @_start name     
+        @_start name
       cb { message: "The key #{key} is now removed from job #{name}." }
     else
       cb { message: "dropData: There is no such job named #{name}" }
@@ -112,7 +112,7 @@ class CronEvents
 
   _valid: (period, tz) ->
     try
-      new CronJob period, ( -> { }), null, null, tz
+      new CronJob period, ( -> { }), null, false, tz
       return true
     catch e
       @robot.logger.error e
