@@ -112,7 +112,7 @@ describe 'cron_events module', ->
 
     context 'but job is not known', ->
       hubot 'cron start nojob'
-      it 'should complain about the period syntax', ->
+      it 'should complain about the inexistence of that job', ->
         expect(hubotResponse()).to.eql 'startJob: There is no such job named nojob'
       it 'should not have added a job in the jobs queue', ->
         expect(room.robot.cron.jobs.somejob).not.to.be.defined
@@ -125,3 +125,36 @@ describe 'cron_events module', ->
         expect(room.robot.brain.data.cron.somejob.started).to.be.true
       it 'should have added a job in the jobs queue', ->
         expect(room.robot.cron.jobs.somejob).to.be.defined
+
+  # ---------------------------------------------------------------------------------
+  context 'user stops a job', ->
+    beforeEach ->
+      room.robot.brain.data.cron = {
+        somejob: {
+          cronTime: '* * * * *',
+          eventName: 'event1',
+          eventData: { },
+          started: true
+        }
+      }
+      room.robot.brain.emit 'loaded'
+
+      afterEach ->
+        room.robot.brain.data.cron = { }
+        room.robot.cron.jobs = { }
+
+    context 'but job is not known', ->
+      hubot 'cron stop nojob'
+      it 'should complain about the inexistence of that job', ->
+        expect(hubotResponse()).to.eql 'stopJob: There is no such job named nojob'
+      it 'should not have added a job in the jobs queue', ->
+        expect(room.robot.cron.jobs.somejob).not.to.be.defined
+
+    context 'and job exists', ->
+      hubot 'cron stop somejob'
+      it 'should not complain about the inexistence of that job', ->
+        expect(hubotResponse()).to.eql 'The job somejob is now paused.'
+      it 'should change brain to record it\'s not started', ->
+        expect(room.robot.brain.data.cron.somejob.started).to.be.false
+      it 'should not have added a job in the jobs queue', ->
+        expect(room.robot.cron.jobs.somejob).to.be.undefined
