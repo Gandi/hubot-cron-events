@@ -22,8 +22,8 @@ module.exports = (robot) ->
   cron = new CronEvents robot
 
   withPermission = (res, cb) =>
-    user = @robot.brain.userForName res.envelope.user.name
-    if @robot.auth? and not @robot.auth?.isAdmin(user)
+    user = robot.brain.userForName res.envelope.user.name
+    if robot.auth? and not robot.auth?.isAdmin(user)
       res.reply "You don't have permission to do that."
       res.finish()
     else
@@ -41,28 +41,30 @@ module.exports = (robot) ->
     '([-/0-9\*,]+ [-/0-9\*,]+ [-/0-9\*,]+ [-/0-9\*,]+ [-/0-9\*,]+(?: [-/0-9\*,]+)?)' +
     '(?: ([^ ]+))?(?: ([^ ]+))?$')
   , (res) ->
-
-    name = res.match[1]
-    period = res.match[2]
-    eventName = res.match[3]
-    tz = res.match[4]
-    cron.addJob name, period, eventName, tz, (so) ->
-      res.send so.message
-    res.finish()
+    withPermission res, ->
+      name = res.match[1]
+      period = res.match[2]
+      eventName = res.match[3]
+      tz = res.match[4]
+      cron.addJob name, period, eventName, tz, (so) ->
+        res.send so.message
+      res.finish()
 
   #   hubot cron start <name>
   robot.respond /cron (?:start|resume) ([^ ]+)$/, (res) ->
-    name = res.match[1]
-    cron.startJob name, (so) ->
-      res.send so.message
-    res.finish()
+    withPermission res, ->
+      name = res.match[1]
+      cron.startJob name, (so) ->
+        res.send so.message
+      res.finish()
 
   #   hubot cron stop <name>
   robot.respond /cron (?:stop|pause) ([^ ]+)$/, (res) ->
-    name = res.match[1]
-    cron.stopJob name, (so) ->
-      res.send so.message
-    res.finish()
+    withPermission res, ->
+      name = res.match[1]
+      cron.stopJob name, (so) ->
+        res.send so.message
+      res.finish()
 
   #   hubot cron status <name>
   robot.respond /cron status ([^ ]+)$/, (res) ->
@@ -80,35 +82,39 @@ module.exports = (robot) ->
 
   #   hubot cron delete <name>
   robot.respond /cron delete ([^ ]+)$/, (res) ->
-    name = res.match[1]
-    cron.deleteJob name, (so) ->
-      res.send so.message
-    res.finish()
+    withPermission res, ->
+      name = res.match[1]
+      cron.deleteJob name, (so) ->
+        res.send so.message
+      res.finish()
 
   #   hubot cron list [<term>]
   robot.respond /cron list(?: ([^ ]+))?$/, (res) ->
-    filter = res.match[1]
-    cron.listJob filter, (so) ->
-      for k, v of so
-        res.send "#{k} - event #{v.eventName}"
-    res.finish()
+    withPermission res, ->
+      filter = res.match[1]
+      cron.listJob filter, (so) ->
+        for k, v of so
+          res.send "#{k} - event #{v.eventName}"
+      res.finish()
 
   #   hubot cron <name> <key> <value>
   robot.respond /cron ([^ ]+) ([^ ]+) = (.+)$/, (res) ->
-    name = res.match[1]
-    key = res.match[2]
-    value = res.match[3]
-    cron.addData name, key, value, (so) ->
-      res.send so.message
-    res.finish()
+    withPermission res, ->
+      name = res.match[1]
+      key = res.match[2]
+      value = res.match[3]
+      cron.addData name, key, value, (so) ->
+        res.send so.message
+      res.finish()
 
   #   hubot cron <name> drop <key>
   robot.respond /cron ([^ ]+) drop ([^ ]+)$/, (res) ->
-    name = res.match[1]
-    key = res.match[2]
-    cron.dropData name, key, (so) ->
-      res.send so.message
-    res.finish()
+    withPermission res, ->
+      name = res.match[1]
+      key = res.match[2]
+      cron.dropData name, key, (so) ->
+        res.send so.message
+      res.finish()
 
   # debug
   # robot.respond /cron jobs$/, (res) ->
