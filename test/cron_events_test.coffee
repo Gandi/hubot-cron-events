@@ -35,6 +35,37 @@ describe 'cron_events module', ->
     room.robot.logger.error = sinon.stub()
 
   # ---------------------------------------------------------------------------------
+  context 'at robot launch', ->
+    beforeEach ->
+      room.robot.brain.data.cron = {
+        somejob: {
+          cronTime: '0 0 1 1 *',
+          eventName: 'event1',
+          eventData: { },
+          started: false
+        },
+        other: {
+          cronTime: '0 0 1 1 *',
+          eventName: 'event2',
+          eventData: { },
+          started: true
+        }
+      }
+      room.robot.brain.emit 'loaded'
+      room.robot.cron.loadAll()
+
+      afterEach ->
+        room.robot.brain.data.cron = { }
+        room.robot.cron.jobs = { }
+
+    context 'when brain is loaded', ->
+      it 'jobs stored as not started are not started', ->
+        expect(room.robot.cron.jobs.somejob).not.to.be.defined
+      it 'jobs stored as started are started', ->
+        expect(room.robot.cron.jobs.other).to.be.defined
+
+
+  # ---------------------------------------------------------------------------------
   context 'user wants to know hubot-cron-events version', ->
 
     context 'cron version', ->
@@ -77,6 +108,7 @@ describe 'cron_events module', ->
 
       afterEach ->
         room.robot.brain.data.cron = { }
+        room.robot.cron.jobs = { }
 
     context 'but job is not known', ->
       hubot 'cron start nojob'
