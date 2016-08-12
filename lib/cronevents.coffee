@@ -23,19 +23,21 @@ class CronEvents
     @robot.brain.on 'loaded', storageLoaded
     storageLoaded() # just in case storage was loaded before we got here
     @jobs = { }
+    @loadAll()
 
   loadAll: ->
     for name, job of @data
-      @jobs[name] = @loadJob job
-      if job.started?
+      if job.started
+        @jobs[name] = @loadJob job
         @jobs[name].start()
 
   loadJob: (job) ->
     params = {
       cronTime: job.cronTime
       start: false
-      onTick: ->
-        @robot.emit job.eventName, job.eventData
+      onTick: =>
+        if job.eventName?
+          @robot.emit job.eventName, job.eventData
     }
     if job.tz?
       params.tz = job.tz
@@ -45,11 +47,14 @@ class CronEvents
     if @_valid period, tz
       @data[name] = {
         cronTime: period,
-        eventName: eventName,
-        eventData: { },
+        eventName: eventName or @data[name]?.eventName,
+        eventData: @data[name]?.eventData or { },
         started: false,
         tz: tz
       }
+      if @jobs[name]?
+        @jobs[name].stop()
+        delete @jobs[name]
       cb { message: "The job #{name} is created. It will stay paused until you start it." }
     else
       cb { message: "Sorry, '#{period}' is not a valid pattern." }
@@ -71,17 +76,24 @@ class CronEvents
   deleteJob: (name, cb) ->
     if @data[name]?
       delete @data[name]
-      if @job[name]?
+      if @jobs[name]?
         @jobs[name].stop()
         delete @jobs[name]
       cb { message: "The job #{name} is deleted." }
     else
       cb { message: "deleteJob: There is no such job named #{name}" }
 
+  listJob: (filter, cb) ->
+    res = {}
+    for k in Object.keys(@data)
+      if new RegExp(filter).test k
+        res[k] = @data[k]
+    cb res
+
   addData: (name, key, value, cb) ->
     if @data[name]?
       @data[name].eventData[key] = value
-      if @job[name]?
+      if @data[name].started
         @_stop name
         @_start name
       cb { message: "The key #{key} is now defined for job #{name}." }
@@ -92,7 +104,7 @@ class CronEvents
     if @data[name]?
       if @data[name].eventData[key]?
         delete @data[name].eventData[key]
-      if @job[name]?
+      if @jobs[name]?
         @_stop name
         @_start name
       cb { message: "The key #{key} is now removed from job #{name}." }
@@ -105,7 +117,7 @@ class CronEvents
     @data[name].started = true
 
   _stop: (name) ->
-    if @job[name]?
+    if @jobs[name]?
       @jobs[name].stop()
       delete @jobs[name]
     @data[name].started = false

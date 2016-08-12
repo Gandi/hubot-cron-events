@@ -7,6 +7,7 @@
 #   hubot cron start <name>
 #   hubot cron stop <name>
 #   hubot cron delete <name>
+#   hubot cron list [<term>]
 #   hubot cron <name> <key> <value>
 #   hubot cron <name> drop <key>
 #
@@ -30,7 +31,7 @@ module.exports = (robot) ->
   robot.respond new RegExp(
     'cron ([^ ]+) ' +
     '([-/0-9\*,]+ [-/0-9\*,]+ [-/0-9\*,]+ [-/0-9\*,]+ [-/0-9\*,]+(?: [-/0-9\*,]+)?)' +
-    ' ([^ ]+)(?: ([^ ]+))?$')
+    '(?: ([^ ]+))?(?: ([^ ]+))?$')
   , (res) ->
     name = res.match[1]
     period = res.match[2]
@@ -60,7 +61,15 @@ module.exports = (robot) ->
     cron.deleteJob name, (so) ->
       res.send so.message
     res.finish()
-    
+
+  #   hubot cron list [<term>]
+  robot.respond /cron list(?: ([^ ]+))?$/, (res) ->
+    filter = res.match[1]
+    cron.listJob filter, (so) ->
+      for k, v of so
+        res.send "#{k} - event #{v.eventName}"
+    res.finish()
+
   #   hubot cron <name> <key> <value>
   robot.respond /cron ([^ ]+) ([^ ]+) = (.+)$/, (res) ->
     name = res.match[1]
@@ -77,3 +86,17 @@ module.exports = (robot) ->
     cron.dropData name, key, (so) ->
       res.send so.message
     res.finish()
+
+  # debug
+  robot.respond /cron jobs$/, (res) ->
+    console.log cron.jobs
+
+  # sample for testing purposes
+  robot.on 'cron.message', (e) ->
+    if e.room and e.message
+      robot.messageRoom e.room, e.message
+
+  # another sample for testing purposes
+  robot.on 'cron.date', (e) ->
+    if e.room
+      robot.messageRoom e.room, new Date()
