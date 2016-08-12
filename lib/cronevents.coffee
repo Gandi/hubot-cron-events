@@ -16,7 +16,7 @@ CronJob = require('cron').CronJob
 
 class CronEvents
 
-  constructor: (@robot, env) ->
+  constructor: (@robot) ->
     storageLoaded = =>
       @data = @robot.brain.data.cron ||= { }
       @robot.logger.debug 'CronEvents Data Loaded: ' + JSON.stringify(@data, null, 2)

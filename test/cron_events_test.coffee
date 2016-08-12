@@ -59,3 +59,27 @@ describe 'cron_events module', ->
       it 'should not complain about the period syntax', ->
         expect(hubotResponse()).
           to.eql 'The job somejob is created. It will stay paused until you start it.'
+
+  # ---------------------------------------------------------------------------------
+  context 'user starts a job', ->
+    beforeEach ->
+      room.robot.brain.data.cron = {
+        somejob: { 
+          cronTime: '* * * * *',
+          eventName: 'event1',
+          eventData: { }
+        }
+      }
+      afterEach ->
+        room.robot.brain.data.cron = { }
+
+    context 'but job is not known', ->
+      hubot 'cron start nojob'
+      it 'should complain about the period syntax', ->
+        expect(hubotResponse()).to.eql "startJob: There is no such job named nojob"
+
+    context 'and job exists', ->
+      hubot 'cron start somejob'
+      it 'should not complain about the period syntax', ->
+        expect(hubotResponse()).
+          to.eql 'The job somejob is created. It will stay paused until you start it.'
