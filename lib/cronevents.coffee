@@ -87,6 +87,8 @@ class CronEvents
       @_stop name
       message = "#{name} emits '#{@data[name].eventName}'" +
                 " every '#{@data[name].cronTime}'"
+      if @data[name].tz?
+        message += " (#{@data[name].tz})"
       if Object.keys(@data[name].eventData).length > 0
         message += ' with'
         for k, v of @data[name].eventData
