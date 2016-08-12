@@ -20,6 +20,7 @@ path       = require 'path'
 module.exports = (robot) ->
 
   cron = new CronEvents robot
+  robot.cron = cron
 
   withPermission = (res, cb) ->
     user = robot.brain.userForName res.envelope.user.name
