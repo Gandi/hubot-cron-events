@@ -105,6 +105,7 @@ describe 'cron_events module', ->
         }
       }
       room.robot.brain.emit 'loaded'
+      room.robot.cron.loadAll()
 
       afterEach ->
         room.robot.brain.data.cron = { }
@@ -138,6 +139,7 @@ describe 'cron_events module', ->
         }
       }
       room.robot.brain.emit 'loaded'
+      room.robot.cron.loadAll()
 
       afterEach ->
         room.robot.brain.data.cron = { }
