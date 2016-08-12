@@ -86,7 +86,7 @@ describe 'cron_events module', ->
         expect(room.robot.logger.error).calledOnce
 
     context 'with a valid period', ->
-      hubot 'cron somejob * * * * * some.event'
+      hubot 'cron somejob 0 0 1 1 * some.event'
       it 'should not complain about the period syntax', ->
         expect(hubotResponse()).
           to.eql 'The job somejob is created. It will stay paused until you start it.'
@@ -98,7 +98,7 @@ describe 'cron_events module', ->
     beforeEach ->
       room.robot.brain.data.cron = {
         somejob: {
-          cronTime: '* * * * *',
+          cronTime: '0 0 1 1 *',
           eventName: 'event1',
           eventData: { },
           started: false
@@ -131,7 +131,7 @@ describe 'cron_events module', ->
     beforeEach ->
       room.robot.brain.data.cron = {
         somejob: {
-          cronTime: '* * * * *',
+          cronTime: '0 0 1 1 *',
           eventName: 'event1',
           eventData: { },
           started: true
@@ -156,5 +156,50 @@ describe 'cron_events module', ->
         expect(hubotResponse()).to.eql 'The job somejob is now paused.'
       it 'should change brain to record it\'s not started', ->
         expect(room.robot.brain.data.cron.somejob.started).to.be.false
+      it 'should not have added a job in the jobs queue', ->
+        expect(room.robot.cron.jobs.somejob).to.be.undefined
+
+  # ---------------------------------------------------------------------------------
+  context 'user asks about the status of a job', ->
+    beforeEach ->
+      room.robot.brain.data.cron = {
+        somejob: {
+          cronTime: '0 0 1 1 *',
+          eventName: 'event1',
+          eventData: { },
+          started: false
+        },
+        other: {
+          cronTime: '0 0 1 1 *',
+          eventName: 'event2',
+          eventData: { },
+          started: true
+        }
+      }
+      room.robot.brain.emit 'loaded'
+      room.robot.cron.loadAll()
+
+      afterEach ->
+        room.robot.brain.data.cron = { }
+        room.robot.cron.jobs = { }
+
+    context 'but job is not known', ->
+      hubot 'cron status nojob'
+      it 'should complain about the inexistence of that job', ->
+        expect(hubotResponse()).to.eql 'statusJob: There is no such job named nojob'
+      it 'should not be in the jobs queue', ->
+        expect(room.robot.cron.jobs.nojob).to.be.undefined
+
+    context 'and job exists and is running', ->
+      hubot 'cron status other'
+      it 'should not complain about the inexistence of that job', ->
+        expect(hubotResponse()).to.eql 'The job other is currently running.'
+      it 'should not have added a job in the jobs queue', ->
+        expect(room.robot.cron.jobs.other).to.be.defined
+
+    context 'and job exists and is paused', ->
+      hubot 'cron status somejob'
+      it 'should not complain about the inexistence of that job', ->
+        expect(hubotResponse()).to.eql 'The job somejob is paused.'
       it 'should not have added a job in the jobs queue', ->
         expect(room.robot.cron.jobs.somejob).to.be.undefined
