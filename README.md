@@ -12,7 +12,7 @@ This plugin is a generic event emitter scheduled using cron job. It's very simil
 
 By itself, this plugin is useless, but it's very handy when combined with other plugins that will receive the emitted events.
 
-
+    WARNING - This code is still in its early stage. Use with caution
 
 Installation
 --------------
