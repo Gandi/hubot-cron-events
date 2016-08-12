@@ -85,10 +85,10 @@ class CronEvents
   infoJob: (name, cb) ->
     if @data[name]?
       @_stop name
-      message = "#{name} emits '#{@data[name].eventName}'" + 
+      message = "#{name} emits '#{@data[name].eventName}'" +
                 " every '#{@data[name].cronTime}'"
       if Object.keys(@data[name].eventData).length > 0
-        message += " with"
+        message += ' with'
         for k, v of @data[name].eventData
           message += " #{k}='#{v}'"
       cb { message: message }
@@ -107,7 +107,7 @@ class CronEvents
       cb { message: "deleteJob: There is no such job named #{name}" }
 
   listJob: (filter, cb) ->
-    res = {}
+    res = { }
     for k in Object.keys(@data)
       if new RegExp(filter).test k
         res[k] = @data[k]

@@ -21,7 +21,7 @@ module.exports = (robot) ->
 
   cron = new CronEvents robot
 
-  withPermission = (res, cb) =>
+  withPermission = (res, cb) ->
     user = robot.brain.userForName res.envelope.user.name
     if robot.auth? and not robot.auth?.isAdmin(user)
       res.reply "You don't have permission to do that."

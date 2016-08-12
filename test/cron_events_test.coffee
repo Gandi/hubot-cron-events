@@ -66,7 +66,7 @@ describe 'cron_events module', ->
   context 'user starts a job', ->
     beforeEach ->
       room.robot.brain.data.cron = {
-        somejob: { 
+        somejob: {
           cronTime: '* * * * *',
           eventName: 'event1',
           eventData: { }
@@ -79,7 +79,7 @@ describe 'cron_events module', ->
     context 'but job is not known', ->
       hubot 'cron start nojob'
       it 'should complain about the period syntax', ->
-        expect(hubotResponse()).to.eql "startJob: There is no such job named nojob"
+        expect(hubotResponse()).to.eql 'startJob: There is no such job named nojob'
 
     # context 'and job exists', ->
     #   hubot 'cron start somejob'
