@@ -21,6 +21,14 @@ module.exports = (robot) ->
 
   cron = new CronEvents robot
 
+  withPermission = (res, cb) =>
+    user = @robot.brain.userForName res.envelope.user.name
+    if @robot.auth? and not @robot.auth?.isAdmin(user)
+      res.reply "You don't have permission to do that."
+      res.finish()
+    else
+      cb()
+
   #   hubot cron version
   robot.respond /cron version$/, (res) ->
     pkg = require path.join __dirname, '..', 'package.json'
@@ -33,6 +41,7 @@ module.exports = (robot) ->
     '([-/0-9\*,]+ [-/0-9\*,]+ [-/0-9\*,]+ [-/0-9\*,]+ [-/0-9\*,]+(?: [-/0-9\*,]+)?)' +
     '(?: ([^ ]+))?(?: ([^ ]+))?$')
   , (res) ->
+
     name = res.match[1]
     period = res.match[2]
     eventName = res.match[3]
@@ -42,16 +51,30 @@ module.exports = (robot) ->
     res.finish()
 
   #   hubot cron start <name>
-  robot.respond /cron start ([^ ]+)$/, (res) ->
+  robot.respond /cron (?:start|resume) ([^ ]+)$/, (res) ->
     name = res.match[1]
     cron.startJob name, (so) ->
       res.send so.message
     res.finish()
 
   #   hubot cron stop <name>
-  robot.respond /cron stop ([^ ]+)$/, (res) ->
+  robot.respond /cron (?:stop|pause) ([^ ]+)$/, (res) ->
     name = res.match[1]
     cron.stopJob name, (so) ->
+      res.send so.message
+    res.finish()
+
+  #   hubot cron status <name>
+  robot.respond /cron status ([^ ]+)$/, (res) ->
+    name = res.match[1]
+    cron.statusJob name, (so) ->
+      res.send so.message
+    res.finish()
+
+  #   hubot cron status <name>
+  robot.respond /cron (?:info|show) ([^ ]+)$/, (res) ->
+    name = res.match[1]
+    cron.infoJob name, (so) ->
       res.send so.message
     res.finish()
 
@@ -88,8 +111,8 @@ module.exports = (robot) ->
     res.finish()
 
   # debug
-  robot.respond /cron jobs$/, (res) ->
-    console.log cron.jobs
+  # robot.respond /cron jobs$/, (res) ->
+  #   console.log cron.jobs
 
   # sample for testing purposes
   robot.on 'cron.message', (e) ->

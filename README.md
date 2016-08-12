@@ -41,25 +41,77 @@ Commands prefixed by `.cron` are here taking in account we use the `.` as hubot 
     .cron version
         gives the version of the hubot-cron-events package loaded
 
-    .cron <name> <period> [<tz>]
+    .cron <name> <period> [<eventname>] [<tz>]
         will create or update a job with unique identifier <name>
         the <period> has to match a valid cronjob syntax of type * * * * *
-        the optional <tz> has to match
+        if 6 items are provided (ie. * * * * * *), the first one will be the seconds
+        the optional <tz> will be applied if provided
+        if no eventname is provided, the job will not emit anything
+
+        Note that this also can be used to modify an existing job
+        in such case, the job data will remain the same
+        and if the eventname is omitted it will not be changed
+
+        example:
+        .cron blah */5 * * * * * cron.message
+            will emit a cron.message every 5 seconds
+            that event requires 2 data params, room and message:
+            .cron blah room = shell
+            .cron blah room = tick tack
+        .cron start blah
+            activates the job, which ill run every 5 seconds
+        .cron blah * * * * * 
+            modifies the job blah to run every minutes instead
+            and it will emit the same event cron.message
+            and it will keep the already set data
+            note that modifying a job stops it, 
+            so it has to be restarted afterward
+        .cron start blah
+            now the job is active and will run every minute
+
+    .cron status <name>
+        tells if the job is running or paused
+
+    .cron info <name>
+    .cron show <name>
+        gives the details about a job
 
     .cron list [<term>]
+        lists all the jobs, or only the jobs with names matching <term>
 
     .cron stop <name>
     .cron pause <name>
+        stops the job <name>
 
     .cron start <name>
     .cron resume <name>
+        starts the job <name>
 
     .cron delete <name>
+        delete the job <name>
 
-    .cron <name> <key> <value>
+    .cron <name> <key> = <value>
+        sets a key-value pair in the job data
+        if the key already exists, its value will be changed
+        if you change the data for job that is currently running
+        it will be stopped and restarted 
     
     .cron <name> drop <key>
+        removes a key-value pair form the job data
+        this will also restart the job if it's running
 
+Some events receivers are also provided for testing purposes:
+
+    cron.message
+        requires data:
+        - room
+        - message
+        it will just say the message in the given room
+
+    cron.date
+        requires data:
+        - room
+        it will tell the date on the room
 
 Testing
 ----------------
