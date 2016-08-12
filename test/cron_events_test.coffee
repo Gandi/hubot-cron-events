@@ -203,3 +203,86 @@ describe 'cron_events module', ->
         expect(hubotResponse()).to.eql 'The job somejob is paused.'
       it 'should not have added a job in the jobs queue', ->
         expect(room.robot.cron.jobs.somejob).to.be.undefined
+
+  # ---------------------------------------------------------------------------------
+  context 'user asks about the info of a job', ->
+    context 'and this job has no event data', ->
+      beforeEach ->
+        room.robot.brain.data.cron = {
+          somejob: {
+            cronTime: '0 0 1 1 *',
+            eventName: 'event1',
+            eventData: { },
+            started: false,
+            tz: undefined
+          }
+        }
+        room.robot.brain.emit 'loaded'
+        room.robot.cron.loadAll()
+
+        afterEach ->
+          room.robot.brain.data.cron = { }
+          room.robot.cron.jobs = { }
+
+      context 'but job is not known', ->
+        hubot 'cron info nojob'
+        it 'should complain about the inexistence of that job', ->
+          expect(hubotResponse()).to.eql 'infoJob: There is no such job named nojob'
+
+      context 'and job exists', ->
+        hubot 'cron info somejob'
+        it 'should provide proper information about that job', ->
+          expect(hubotResponse()).to.eql "somejob emits 'event1' every '0 0 1 1 *'"
+
+    context 'and this job has event data', ->
+      beforeEach ->
+        room.robot.brain.data.cron = {
+          somejob: {
+            cronTime: '0 0 1 1 *',
+            eventName: 'event1',
+            eventData: {
+              key1: 'value1',
+              key2: 'value2'
+            },
+            started: false,
+            tz: undefined
+          }
+        }
+        room.robot.brain.emit 'loaded'
+
+        afterEach ->
+          room.robot.brain.data.cron = { }
+          room.robot.cron.jobs = { }
+
+      context 'and job exists', ->
+        hubot 'cron info somejob'
+        it 'should provide proper information about that job', ->
+          expect(hubotResponse()).
+            to.eql "somejob emits 'event1' every '0 0 1 1 *' with key1='value1' key2='value2'"
+
+
+    context 'and this job has event data and timezone', ->
+      beforeEach ->
+        room.robot.brain.data.cron = {
+          somejob: {
+            cronTime: '0 0 1 1 *',
+            eventName: 'event1',
+            eventData: {
+              key1: 'value1',
+              key2: 'value2'
+            },
+            started: false,
+            tz: 'UTC'
+          }
+        }
+        room.robot.brain.emit 'loaded'
+
+        afterEach ->
+          room.robot.brain.data.cron = { }
+          room.robot.cron.jobs = { }
+
+      context 'and job exists', ->
+        hubot 'cron info somejob'
+        it 'should provide proper information about that job', ->
+          expect(hubotResponse()).
+            to.eql "somejob emits 'event1' every '0 0 1 1 *' (UTC) with key1='value1' key2='value2'"
