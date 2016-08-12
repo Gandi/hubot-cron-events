@@ -288,3 +288,36 @@ describe 'cron_events module', ->
         it 'should provide proper information about that job', ->
           expect(hubotResponse()).
             to.eql "somejob emits 'event1' every '0 0 1 1 *' (UTC) with key1='value1' key2='value2'"
+
+  # ---------------------------------------------------------------------------------
+  context 'user deletes a job', ->
+    beforeEach ->
+      room.robot.brain.data.cron = {
+        somejob: {
+          cronTime: '0 0 1 1 *',
+          eventName: 'event1',
+          eventData: { },
+          started: false,
+          tz: undefined
+        }
+      }
+      room.robot.brain.emit 'loaded'
+      room.robot.cron.loadAll()
+
+      afterEach ->
+        room.robot.brain.data.cron = { }
+        room.robot.cron.jobs = { }
+
+    context 'but job is not known', ->
+      hubot 'cron delete nojob'
+      it 'should complain about the inexistence of that job', ->
+        expect(hubotResponse()).to.eql 'deleteJob: There is no such job named nojob'
+
+    context 'and job exists', ->
+      hubot 'cron delete somejob'
+      it 'should say that the jop is deleted', ->
+        expect(hubotResponse()).to.eql 'The job somejob is deleted.'
+      it 'should clean the brain of that job', ->
+        expect(room.robot.brain.data.cron.somejob).to.be.undefined
+      it 'should clean the jobs queue of that job', ->
+        expect(room.robot.cron.jobs.somejob).to.be.undefined
