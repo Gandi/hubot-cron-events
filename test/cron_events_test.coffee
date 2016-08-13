@@ -10,7 +10,7 @@ Helper = require('hubot-test-helper')
 # helper loads a specific script if it's a file
 helper = new Helper('../scripts/cron_events.coffee')
 
-# path   = require 'path'
+path   = require 'path'
 sinon  = require 'sinon'
 expect = require('chai').use(require('sinon-chai')).expect
 
@@ -455,3 +455,50 @@ describe 'cron_events module', ->
         expect(room.robot.brain.data.cron.somejob.started).to.be.true
       it 'should keep the job in the queue', ->
         expect(room.robot.cron.jobs.somejob).to.be.defined
+
+  # ---------------------------------------------------------------------------------
+  context 'permissions system', ->
+    beforeEach ->
+      process.env.HUBOT_AUTH_ADMIN = 'admin_user'
+      room.robot.loadFile path.resolve('node_modules/hubot-auth/src'), 'auth.coffee'
+      room.robot.brain.userForId 'admin_user', {
+        name: 'admin_user'
+      }
+      room.robot.brain.userForId 'user', {
+        name: 'user'
+      }
+
+    context 'user wants to stop a job', ->
+      beforeEach ->
+        room.robot.brain.data.cron = {
+          somejob: {
+            cronTime: '0 0 1 1 *',
+            eventName: 'event1',
+            eventData: { },
+            started: true
+          }
+        }
+        room.robot.brain.emit 'loaded'
+        room.robot.cron.loadAll()
+
+        afterEach ->
+          room.robot.brain.data.cron = { }
+          room.robot.cron.jobs = { }
+
+      context.only 'and user is not admin', ->
+        hubot 'cron stop somejob', 'user'
+        it 'should deny permission to the user', ->
+          expect(hubotResponse()).to.eql "@user You don't have permission to do that."
+        it 'should change brain to record it\'s not started', ->
+          expect(room.robot.brain.data.cron.somejob.started).to.be.true
+        it 'should not have added a job in the jobs queue', ->
+          expect(room.robot.cron.jobs.somejob).to.be.defined
+
+      context 'and user is admin', ->
+        hubot 'cron stop somejob', 'admin_user'
+        it 'should comply and stop the job', ->
+          expect(hubotResponse()).to.eql "The job somejob is now paused."
+        it 'should change brain to record it\'s not started', ->
+          expect(room.robot.brain.data.cron.somejob.started).to.be.false
+        it 'should not have added a job in the jobs queue', ->
+          expect(room.robot.cron.jobs.somejob).to.be.undefined
