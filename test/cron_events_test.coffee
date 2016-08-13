@@ -315,7 +315,7 @@ describe 'cron_events module', ->
 
     context 'and job exists', ->
       hubot 'cron delete somejob'
-      it 'should say that the jop is deleted', ->
+      it 'should say that the job is deleted', ->
         expect(hubotResponse()).to.eql 'The job somejob is deleted.'
       it 'should clean the brain of that job', ->
         expect(room.robot.brain.data.cron.somejob).to.be.undefined
@@ -380,3 +380,39 @@ describe 'cron_events module', ->
         expect(hubotResponse(2)).to.eql 'someotherjob - event event1'
         expect(hubotResponse(3)).to.eql 'anotherjob - event event1'
         expect(hubotResponse(4)).to.be.undefined
+
+  # ---------------------------------------------------------------------------------
+  context 'user sets a data param', ->
+    beforeEach ->
+      room.robot.brain.data.cron = {
+        somejob: {
+          cronTime: '0 0 1 1 *',
+          eventName: 'event1',
+          eventData: { },
+          started: true,
+          tz: undefined
+        }
+      }
+      room.robot.brain.emit 'loaded'
+      room.robot.cron.loadAll()
+
+      afterEach ->
+        room.robot.brain.data.cron = { }
+        room.robot.cron.jobs = { }
+
+    context 'but job is not known', ->
+      hubot 'cron nojob key = param'
+      it 'should complain about the inexistence of that job', ->
+        expect(hubotResponse()).to.eql 'addData: There is no such job named nojob'
+
+    context 'and job exists', ->
+      hubot 'cron somejob key = param'
+      it 'should say that param is added to data', ->
+        expect(hubotResponse()).to.eql 'The key key is now defined for job somejob.'
+      it 'should set the key in the brain for taht job', ->
+        expect(room.robot.brain.data.cron.somejob.eventData).
+          to.eql { key: 'param' }
+      it 'should keep the job running', ->
+        expect(room.robot.brain.data.cron.somejob.started).to.be.true
+      it 'should keep the jobb in the queue', ->
+        expect(room.robot.cron.jobs.somejob).to.be.defined
