@@ -49,12 +49,12 @@ class CronEvents
         cronTime: period,
         eventName: eventName or @data[name]?.eventName,
         eventData: @data[name]?.eventData or { },
-        started: false,
+        started: @data[name]?.started or false,
         tz: tz
       }
       if @jobs[name]?
-        @jobs[name].stop()
-        delete @jobs[name]
+        @_stop name
+        @_start name
       cb { message: "The job #{name} is created. It will stay paused until you start it." }
     else
       cb { message: "Sorry, '#{period}' is not a valid pattern." }
@@ -97,7 +97,6 @@ class CronEvents
     else
       cb { message: "infoJob: There is no such job named #{name}" }
 
-
   deleteJob: (name, cb) ->
     if @data[name]?
       delete @data[name]
@@ -118,7 +117,7 @@ class CronEvents
   addData: (name, key, value, cb) ->
     if @data[name]?
       @data[name].eventData[key] = value
-      if @data[name].started
+      if @jobs[name]?
         @_stop name
         @_start name
       cb { message: "The key #{key} is now defined for job #{name}." }
