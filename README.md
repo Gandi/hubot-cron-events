@@ -12,7 +12,6 @@ This plugin is a generic event emitter scheduled using cron job. It's very simil
 
 By itself, this plugin is useless, but it's very handy when combined with other plugins that will receive the emitted events.
 
-    WARNING - This code is still in its early stage. Use with caution
 
 Installation
 --------------
@@ -57,7 +56,7 @@ Commands prefixed by `.cron` are here taking in account we use the `.` as hubot 
             will emit a cron.message every 5 seconds
             that event requires 2 data params, room and message:
             .cron blah room = shell
-            .cron blah room = tick tack
+            .cron blah message = tick tack
         .cron start blah
             activates the job, which ill run every 5 seconds
         .cron blah * * * * * 
