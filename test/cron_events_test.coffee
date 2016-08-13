@@ -93,6 +93,30 @@ describe 'cron_events module', ->
       it 'records the new job in the brain', ->
         expect(room.robot.brain.data.cron.somejob).to.exist
 
+    context 'and job already runs', ->
+      beforeEach ->
+        room.robot.brain.data.cron = {
+          somejob: {
+            cronTime: '0 0 1 1 *',
+            eventName: 'event2',
+            eventData: { },
+            started: true
+          }
+        }
+        room.robot.brain.emit 'loaded'
+        room.robot.cron.loadAll()
+
+        afterEach ->
+          room.robot.brain.data.cron = { }
+          room.robot.cron.jobs = { }
+
+      hubot 'cron somejob 0 0 1 1 * some.event'
+      it 'should change the job', ->
+        expect(hubotResponse()).
+          to.eql 'The job somejob is created. It will stay paused until you start it.'
+      it 'should have still have the job in the jobs queue', ->
+        expect(room.robot.cron.jobs.somejob).to.be.defined
+
   # ---------------------------------------------------------------------------------
   context 'user starts a job', ->
     beforeEach ->
@@ -297,7 +321,7 @@ describe 'cron_events module', ->
           cronTime: '0 0 1 1 *',
           eventName: 'event1',
           eventData: { },
-          started: false,
+          started: true,
           tz: undefined
         }
       }
