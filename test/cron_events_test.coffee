@@ -485,7 +485,7 @@ describe 'cron_events module', ->
           room.robot.brain.data.cron = { }
           room.robot.cron.jobs = { }
 
-      context.only 'and user is not admin', ->
+      context 'and user is not admin', ->
         hubot 'cron stop somejob', 'user'
         it 'should deny permission to the user', ->
           expect(hubotResponse()).to.eql "@user You don't have permission to do that."
