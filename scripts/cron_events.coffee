@@ -94,8 +94,11 @@ module.exports = (robot) ->
     withPermission res, ->
       filter = res.match[1]
       cron.listJob filter, (so) ->
-        for k, v of so
-          res.send "#{k} - event #{v.eventName}"
+        if Object.keys(so).length is 0
+          res.send "The is no job matching #{filter}"
+        else
+          for k, v of so
+            res.send "#{k} - event #{v.eventName}"
       res.finish()
 
   #   hubot cron <name> <key> <value>

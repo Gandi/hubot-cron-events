@@ -321,3 +321,62 @@ describe 'cron_events module', ->
         expect(room.robot.brain.data.cron.somejob).to.be.undefined
       it 'should clean the jobs queue of that job', ->
         expect(room.robot.cron.jobs.somejob).to.be.undefined
+
+  # ---------------------------------------------------------------------------------
+  context 'user lists job', ->
+    beforeEach ->
+      room.robot.brain.data.cron = {
+        somejob: {
+          cronTime: '0 0 1 1 *',
+          eventName: 'event1',
+          eventData: { },
+          started: false,
+          tz: undefined
+        },
+        someotherjob: {
+          cronTime: '0 0 1 1 *',
+          eventName: 'event1',
+          eventData: { },
+          started: false,
+          tz: undefined
+        },
+        anotherjob: {
+          cronTime: '0 0 1 1 *',
+          eventName: 'event1',
+          eventData: { },
+          started: false,
+          tz: undefined
+        }
+      }
+      room.robot.brain.emit 'loaded'
+      room.robot.cron.loadAll()
+
+      afterEach ->
+        room.robot.brain.data.cron = { }
+        room.robot.cron.jobs = { }
+
+    context 'but there is no match', ->
+      hubot 'cron list nojob'
+      it 'should warn that there are no matches', ->
+        expect(hubotResponse()).to.eql 'The is no job matching nojob'
+
+    context 'and there is one match', ->
+      hubot 'cron list somejob'
+      it 'should show the matching job', ->
+        expect(hubotResponse()).to.eql 'somejob - event event1'
+        expect(hubotResponse(2)).to.be.undefined
+
+    context 'and there is two matches', ->
+      hubot 'cron list ome'
+      it 'should show the matching jobs', ->
+        expect(hubotResponse()).to.eql 'somejob - event event1'
+        expect(hubotResponse(2)).to.eql 'someotherjob - event event1'
+        expect(hubotResponse(3)).to.be.undefined
+
+    context 'and it gets all jobs', ->
+      hubot 'cron list'
+      it 'should show the whole list of jobs', ->
+        expect(hubotResponse()).to.eql 'somejob - event event1'
+        expect(hubotResponse(2)).to.eql 'someotherjob - event event1'
+        expect(hubotResponse(3)).to.eql 'anotherjob - event event1'
+        expect(hubotResponse(4)).to.be.undefined
