@@ -48,7 +48,8 @@ describe 'cron_events module', ->
           cronTime: '0 0 1 1 *',
           eventName: 'event2',
           eventData: { },
-          started: true
+          started: true,
+          tz: 'UTC'
         }
       }
       room.robot.brain.emit 'loaded'
@@ -63,6 +64,8 @@ describe 'cron_events module', ->
         expect(room.robot.cron.jobs.somejob).not.to.be.defined
       it 'jobs stored as started are started', ->
         expect(room.robot.cron.jobs.other).to.be.defined
+      it 'job in brain should have a tz recorded', ->
+        expect(room.robot.brain.data.cron.other.tz).to.eql 'UTC'
 
 
   # ---------------------------------------------------------------------------------
@@ -521,7 +524,7 @@ describe 'cron_events module', ->
       context 'and user is admin', ->
         hubot 'cron stop somejob', 'admin_user'
         it 'should comply and stop the job', ->
-          expect(hubotResponse()).to.eql "The job somejob is now paused."
+          expect(hubotResponse()).to.eql 'The job somejob is now paused.'
         it 'should change brain to record it\'s not started', ->
           expect(room.robot.brain.data.cron.somejob.started).to.be.false
         it 'should not have added a job in the jobs queue', ->
