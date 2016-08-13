@@ -484,6 +484,29 @@ describe 'cron_events module', ->
         expect(room.robot.cron.jobs.somejob).to.be.defined
 
   # ---------------------------------------------------------------------------------
+  context 'events listeners', ->
+    it 'should know about cron.message', ->
+      expect(room.robot.events['cron.message']).to.be.defined
+    it 'should know about cron.date', ->
+      expect(room.robot.events['cron.date']).to.be.defined
+
+    context 'for cron.message', ->
+      beforeEach (done) ->
+        room.robot.emit 'cron.message', { room: 'room1', message: 'ha' }
+        setTimeout (done), 50
+
+      it 'should say that param is added to data', ->
+        expect(hubotResponse(0)).to.eql 'ha'
+
+    context 'for cron.date', ->
+      beforeEach (done) ->
+        room.robot.emit 'cron.date', { room: 'room1' }
+        setTimeout (done), 50
+
+      it 'should say that param is added to data', ->
+        expect(hubotResponse(0)).to.be.defined
+
+  # ---------------------------------------------------------------------------------
   context 'permissions system', ->
     beforeEach ->
       process.env.HUBOT_AUTH_ADMIN = 'admin_user'
