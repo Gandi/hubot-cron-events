@@ -414,5 +414,44 @@ describe 'cron_events module', ->
           to.eql { key: 'param' }
       it 'should keep the job running', ->
         expect(room.robot.brain.data.cron.somejob.started).to.be.true
-      it 'should keep the jobb in the queue', ->
+      it 'should keep the job in the queue', ->
+        expect(room.robot.cron.jobs.somejob).to.be.defined
+
+  # ---------------------------------------------------------------------------------
+  context 'user drops a data param', ->
+    beforeEach ->
+      room.robot.brain.data.cron = {
+        somejob: {
+          cronTime: '0 0 1 1 *',
+          eventName: 'event1',
+          eventData: {
+            key: 'param',
+            key2: 'param2'
+          },
+          started: true,
+          tz: undefined
+        }
+      }
+      room.robot.brain.emit 'loaded'
+      room.robot.cron.loadAll()
+
+      afterEach ->
+        room.robot.brain.data.cron = { }
+        room.robot.cron.jobs = { }
+
+    context 'but job is not known', ->
+      hubot 'cron nojob drop key'
+      it 'should complain about the inexistence of that job', ->
+        expect(hubotResponse()).to.eql 'dropData: There is no such job named nojob'
+
+    context 'and job exists', ->
+      hubot 'cron somejob drop key'
+      it 'should say that param is added to data', ->
+        expect(hubotResponse()).to.eql 'The key key is now removed from job somejob.'
+      it 'should set the key in the brain for taht job', ->
+        expect(room.robot.brain.data.cron.somejob.eventData).
+          to.eql { key2: 'param2' }
+      it 'should keep the job running', ->
+        expect(room.robot.brain.data.cron.somejob.started).to.be.true
+      it 'should keep the job in the queue', ->
         expect(room.robot.cron.jobs.somejob).to.be.defined
