@@ -3,5 +3,8 @@ node_js:
   - "4.3.1"
   - "0.10"
 script: make test-coverage
-after_success:
-  - 'cat ./coverage/lcov.info | ./node_modules/.bin/coveralls'
+# after_success:
+#   - 'cat ./coverage/lcov.info | ./node_modules/.bin/coveralls'
+addons:
+  code_climate:
+    repo_token: 8ea1b6c786f474dace7d825aafc6c8f048aa263d58c8f1451addb63fd361b5e2

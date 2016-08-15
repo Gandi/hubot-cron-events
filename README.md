@@ -5,7 +5,7 @@ Hubot Cron Events Plugin
 [![Downloads](https://img.shields.io/npm/dt/hubot-cron-events.svg)](https://www.npmjs.com/package/hubot-cron-events)
 [![Build Status](https://img.shields.io/travis/Gandi/hubot-cron-events.svg)](https://travis-ci.org/Gandi/hubot-cron-events)
 [![Dependency Status](https://gemnasium.com/Gandi/hubot-cron-events.svg)](https://gemnasium.com/Gandi/hubot-cron-events)
-[![Coverage Status](http://img.shields.io/coveralls/Gandi/hubot-cron-events.svg)](https://coveralls.io/r/Gandi/hubot-cron-events)
+[![Coverage Status](https://img.shields.io/codeclimate/coverage/github/Gandi/hubot-cron-events.svg)](https://codeclimate.com/github/Gandi/hubot-cron-events/coverage)
 [![Code Climate](https://img.shields.io/codeclimate/github/Gandi/hubot-cron-events.svg)](https://codeclimate.com/github/Gandi/hubot-cron-events)
 
 This plugin is a generic event emitter scheduled using cron job. It's very similar to [hubot-cron](https://github.com/miyagawa/hubot-cron), but instead of sending messages it emits events.
