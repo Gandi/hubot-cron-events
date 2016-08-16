@@ -129,6 +129,12 @@ describe 'cron_events module', ->
           eventName: 'event1',
           eventData: { },
           started: false
+        },
+        another: {
+          cronTime: '0 0 1 1 *',
+          eventName: 'event2',
+          eventData: { },
+          started: true
         }
       }
       room.robot.brain.emit 'loaded'
@@ -153,6 +159,13 @@ describe 'cron_events module', ->
         expect(room.robot.brain.data.cron.somejob.started).to.be.true
       it 'should have added a job in the jobs queue', ->
         expect(room.robot.cron.jobs.somejob).to.be.defined
+
+    context 'and job exists and runs', ->
+      hubot 'cron start another'
+      it 'should change brain to record it\'s still started', ->
+        expect(room.robot.brain.data.cron.another.started).to.be.true
+      it 'should have added a job in the jobs queue', ->
+        expect(room.robot.cron.jobs.another).to.be.defined
 
   # ---------------------------------------------------------------------------------
   context 'user stops a job', ->
