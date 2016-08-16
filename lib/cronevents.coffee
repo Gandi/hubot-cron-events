@@ -61,6 +61,8 @@ class CronEvents
 
   startJob: (name, cb) ->
     if @data[name]?
+      if @jobs[name]?
+        @_stop name
       @_start name
       cb { message: "The job #{name} is now in service." }
     else
