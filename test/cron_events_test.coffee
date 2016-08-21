@@ -115,8 +115,7 @@ describe 'cron_events module', ->
 
       hubot 'cron somejob 0 0 1 1 * some.event'
       it 'should change the job', ->
-        expect(hubotResponse()).
-          to.eql 'The job somejob is created. It will stay paused until you start it.'
+        expect(hubotResponse()).to.eql 'The job somejob updated.'
       it 'should have still have the job in the jobs queue', ->
         expect(room.robot.cron.jobs.somejob).to.be.defined
 

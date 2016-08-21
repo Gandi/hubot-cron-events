@@ -40,16 +40,16 @@ module.exports = (robot) ->
   robot.respond new RegExp(
     'cron ([^ ]+) ' +
     '([-/0-9\*,]+ [-/0-9\*,]+ [-/0-9\*,]+ [-/0-9\*,]+ [-/0-9\*,]+(?: [-/0-9\*,]+)?)' +
-    '(?: ([^ ]+))?(?: ([^ ]+))?$')
-  , (res) ->
-    withPermission res, ->
-      name = res.match[1]
-      period = res.match[2]
-      eventName = res.match[3]
-      tz = res.match[4]
-      cron.addJob name, period, eventName, tz, (so) ->
-        res.send so.message
-      res.finish()
+    '(?: ([-_a-zA-Z0-9\.]+))?(?: ([^ ]+))?'
+    ), (res) ->
+      withPermission res, ->
+        name = res.match[1]
+        period = res.match[2]
+        eventName = res.match[3]
+        tz = res.match[4]
+        cron.addJob name, period, eventName, tz, (so) ->
+          res.send so.message
+        res.finish()
 
   #   hubot cron start <name>
   robot.respond /cron (?:start|resume) ([^ ]+)$/, (res) ->
@@ -95,14 +95,17 @@ module.exports = (robot) ->
       filter = res.match[1]
       cron.listJob filter, (so) ->
         if Object.keys(so).length is 0
-          res.send "The is no job matching #{filter}"
+          if filter?
+            res.send "The is no job matching #{filter}"
+          else
+            res.send 'The is no job defined.'
         else
           for k, v of so
             res.send "#{k} - event #{v.eventName}"
       res.finish()
 
   #   hubot cron <name> <key> <value>
-  robot.respond /cron ([^ ]+) ([^ ]+) = (.+)$/, (res) ->
+  robot.respond /cron ([^ ]+) ([^ ]+) *= *(.+)$/, (res) ->
     withPermission res, ->
       name = res.match[1]
       key = res.match[2]
@@ -121,8 +124,8 @@ module.exports = (robot) ->
       res.finish()
 
   # debug
-  # robot.respond /cron jobs$/, (res) ->
-  #   console.log cron.jobs
+  robot.respond /cron jobs$/, (res) ->
+    console.log cron.jobs
 
   # sample for testing purposes
   robot.on 'cron.message', (e) ->

@@ -1,6 +1,11 @@
 Hubot-cron-events Changelog
 ==========================
 
+### 0.1.3 - 2016-08-21
+- fix updating a running job
+- fix job update message
+- fix message for empty list
+
 ### 0.1.2 - 2016-08-16
 - avoid to start a job twice
 

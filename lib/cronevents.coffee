@@ -45,17 +45,25 @@ class CronEvents
 
   addJob: (name, period, eventName, tz, cb) ->
     if @_valid period, tz
-      @data[name] = {
-        cronTime: period,
-        eventName: eventName or @data[name]?.eventName,
-        eventData: @data[name]?.eventData or { },
-        started: @data[name]?.started or false,
-        tz: tz
-      }
-      if @jobs[name]?
-        @_stop name
-        @_start name
-      cb { message: "The job #{name} is created. It will stay paused until you start it." }
+      if @data[name]?
+        @data[name].cronTime = period
+        if eventName?
+          @data[name].eventName = eventName
+        if tz?
+          @data[name].tz = tz
+        if @jobs[name]?
+          @_stop name
+          @_start name
+        cb { message: "The job #{name} updated." }
+      else
+        @data[name] = {
+          cronTime: period,
+          eventName: eventName,
+          eventData: { },
+          started: false,
+          tz: tz
+        }
+        cb { message: "The job #{name} is created. It will stay paused until you start it." }
     else
       cb { message: "Sorry, '#{period}' is not a valid pattern." }
 
