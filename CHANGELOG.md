@@ -1,6 +1,11 @@
 Hubot-cron-events Changelog
 ==========================
 
+### 0.1.4 - wip
+- merge .cron show and .cron list
+- add complete information in .cron show/list
+- remove obsolete .cron status
+
 ### 0.1.3 - 2016-08-21
 - fix updating a running job
 - fix job update message
