@@ -124,8 +124,8 @@ module.exports = (robot) ->
       res.finish()
 
   # debug
-  robot.respond /cron jobs$/, (res) ->
-    console.log cron.jobs
+  # robot.respond /cron jobs$/, (res) ->
+  #   console.log cron.jobs
 
   # sample for testing purposes
   robot.on 'cron.message', (e) ->
