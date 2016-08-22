@@ -1,7 +1,7 @@
 {
   "name": "hubot-cron-events",
   "description": "A hubot plugin to perform generic event emission scheduled using cron job.",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "author": {
     "name": "mose",
     "email": "mose@gandi.net",

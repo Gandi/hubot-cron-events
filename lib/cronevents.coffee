@@ -92,21 +92,6 @@ class CronEvents
     else
       cb { message: "statusJob: There is no such job named #{name}" }
 
-  infoJob: (name, cb) ->
-    if @data[name]?
-      @_stop name
-      message = "#{name} emits '#{@data[name].eventName}'" +
-                " every '#{@data[name].cronTime}'"
-      if @data[name].tz?
-        message += " (#{@data[name].tz})"
-      if Object.keys(@data[name].eventData).length > 0
-        message += ' with'
-        for k, v of @data[name].eventData
-          message += " #{k}='#{v}'"
-      cb { message: message }
-    else
-      cb { message: "infoJob: There is no such job named #{name}" }
-
   deleteJob: (name, cb) ->
     if @data[name]?
       delete @data[name]

@@ -74,13 +74,6 @@ module.exports = (robot) ->
       res.send so.message
     res.finish()
 
-  #   hubot cron status <name>
-  robot.respond /cron (?:info|show) ([^ ]+)$/, (res) ->
-    name = res.match[1]
-    cron.infoJob name, (so) ->
-      res.send so.message
-    res.finish()
-
   #   hubot cron delete <name>
   robot.respond /cron delete ([^ ]+)$/, (res) ->
     withPermission res, ->
@@ -90,7 +83,7 @@ module.exports = (robot) ->
       res.finish()
 
   #   hubot cron list [<term>]
-  robot.respond /cron list(?: ([^ ]+))?$/, (res) ->
+  robot.respond /cron (?:info|show|list)(?: ([^ ]+))?$/, (res) ->
     withPermission res, ->
       filter = res.match[1]
       cron.listJob filter, (so) ->
@@ -101,7 +94,16 @@ module.exports = (robot) ->
             res.send 'The is no job defined.'
         else
           for k, v of so
-            res.send "#{k} - event #{v.eventName}"
+            status = if v.started
+              '(active)'
+            else
+              '(inactive)'
+            eventdata = ''
+            if Object.keys(v.eventData).length > 0
+              eventdata = 'with '
+              for datakey, datavalue of v.eventData
+                eventdata += "#{datakey}='#{datavalue}' "
+            res.send "'#{k}' is #{v.cronTime} #{v.eventName} #{eventdata}#{status}"
       res.finish()
 
   #   hubot cron <name> <key> <value>
@@ -124,8 +126,8 @@ module.exports = (robot) ->
       res.finish()
 
   # debug
-  robot.respond /cron jobs$/, (res) ->
-    console.log cron.jobs
+  # robot.respond /cron jobs$/, (res) ->
+  #   console.log cron.jobs
 
   # sample for testing purposes
   robot.on 'cron.message', (e) ->
