@@ -55,9 +55,9 @@ describe 'cron_events module', ->
       room.robot.brain.emit 'loaded'
       room.robot.cron.loadAll()
 
-      afterEach ->
-        room.robot.brain.data.cron = { }
-        room.robot.cron.jobs = { }
+    afterEach ->
+      room.robot.brain.data.cron = { }
+      room.robot.cron.jobs = { }
 
     context 'when brain is loaded', ->
       it 'jobs stored as not started are not started', ->
@@ -153,9 +153,9 @@ describe 'cron_events module', ->
         room.robot.brain.emit 'loaded'
         room.robot.cron.loadAll()
 
-        afterEach ->
-          room.robot.brain.data.cron = { }
-          room.robot.cron.jobs = { }
+      afterEach ->
+        room.robot.brain.data.cron = { }
+        room.robot.cron.jobs = { }
 
       context 'with simple cronTime update', ->
         hubot 'cron somejob 0 0 1 * * some.event'
@@ -211,9 +211,9 @@ describe 'cron_events module', ->
       room.robot.brain.emit 'loaded'
       room.robot.cron.loadAll()
 
-      afterEach ->
-        room.robot.brain.data.cron = { }
-        room.robot.cron.jobs = { }
+    afterEach ->
+      room.robot.brain.data.cron = { }
+      room.robot.cron.jobs = { }
 
     context 'but job is not known', ->
       hubot 'cron start nojob'
@@ -252,9 +252,9 @@ describe 'cron_events module', ->
       room.robot.brain.emit 'loaded'
       room.robot.cron.loadAll()
 
-      afterEach ->
-        room.robot.brain.data.cron = { }
-        room.robot.cron.jobs = { }
+    afterEach ->
+      room.robot.brain.data.cron = { }
+      room.robot.cron.jobs = { }
 
     context 'but job is not known', ->
       hubot 'cron stop nojob'
@@ -292,9 +292,9 @@ describe 'cron_events module', ->
       room.robot.brain.emit 'loaded'
       room.robot.cron.loadAll()
 
-      afterEach ->
-        room.robot.brain.data.cron = { }
-        room.robot.cron.jobs = { }
+    afterEach ->
+      room.robot.brain.data.cron = { }
+      room.robot.cron.jobs = { }
 
     context 'but job is not known', ->
       hubot 'cron status nojob'
@@ -325,9 +325,9 @@ describe 'cron_events module', ->
         room.robot.brain.emit 'loaded'
         room.robot.cron.loadAll()
 
-        afterEach ->
-          room.robot.brain.data.cron = { }
-          room.robot.cron.jobs = { }
+      afterEach ->
+        room.robot.brain.data.cron = { }
+        room.robot.cron.jobs = { }
 
       context 'and user wants the whoe list', ->
         hubot 'cron info'
@@ -348,9 +348,9 @@ describe 'cron_events module', ->
         room.robot.brain.emit 'loaded'
         room.robot.cron.loadAll()
 
-        afterEach ->
-          room.robot.brain.data.cron = { }
-          room.robot.cron.jobs = { }
+      afterEach ->
+        room.robot.brain.data.cron = { }
+        room.robot.cron.jobs = { }
 
       context 'but job is not known', ->
         hubot 'cron info nojob'
@@ -378,9 +378,9 @@ describe 'cron_events module', ->
         }
         room.robot.brain.emit 'loaded'
 
-        afterEach ->
-          room.robot.brain.data.cron = { }
-          room.robot.cron.jobs = { }
+      afterEach ->
+        room.robot.brain.data.cron = { }
+        room.robot.cron.jobs = { }
 
       context 'and job exists', ->
         hubot 'cron info somejob'
@@ -405,9 +405,9 @@ describe 'cron_events module', ->
         }
         room.robot.brain.emit 'loaded'
 
-        afterEach ->
-          room.robot.brain.data.cron = { }
-          room.robot.cron.jobs = { }
+      afterEach ->
+        room.robot.brain.data.cron = { }
+        room.robot.cron.jobs = { }
 
       context 'and job exists', ->
         hubot 'cron info somejob'
@@ -430,9 +430,9 @@ describe 'cron_events module', ->
       room.robot.brain.emit 'loaded'
       room.robot.cron.loadAll()
 
-      afterEach ->
-        room.robot.brain.data.cron = { }
-        room.robot.cron.jobs = { }
+    afterEach ->
+      room.robot.brain.data.cron = { }
+      room.robot.cron.jobs = { }
 
     context 'but job is not known', ->
       hubot 'cron delete nojob'
@@ -477,9 +477,9 @@ describe 'cron_events module', ->
       room.robot.brain.emit 'loaded'
       room.robot.cron.loadAll()
 
-      afterEach ->
-        room.robot.brain.data.cron = { }
-        room.robot.cron.jobs = { }
+    afterEach ->
+      room.robot.brain.data.cron = { }
+      room.robot.cron.jobs = { }
 
     context 'but there is no match', ->
       hubot 'cron list nojob'
@@ -522,9 +522,9 @@ describe 'cron_events module', ->
       room.robot.brain.emit 'loaded'
       room.robot.cron.loadAll()
 
-      afterEach ->
-        room.robot.brain.data.cron = { }
-        room.robot.cron.jobs = { }
+    afterEach ->
+      room.robot.brain.data.cron = { }
+      room.robot.cron.jobs = { }
 
     context 'but job is not known', ->
       hubot 'cron nojob key = param'
@@ -561,9 +561,9 @@ describe 'cron_events module', ->
       room.robot.brain.emit 'loaded'
       room.robot.cron.loadAll()
 
-      afterEach ->
-        room.robot.brain.data.cron = { }
-        room.robot.cron.jobs = { }
+    afterEach ->
+      room.robot.brain.data.cron = { }
+      room.robot.cron.jobs = { }
 
     context 'but job is not known', ->
       hubot 'cron nojob drop key'
@@ -606,6 +606,31 @@ describe 'cron_events module', ->
         expect(hubotResponse(0)).to.be.defined
 
   # ---------------------------------------------------------------------------------
+  context 'events triggers', ->
+    beforeEach ->
+      room.robot.brain.data.cron = {
+        somejob: {
+          cronTime: '0 0 1 1 *',
+          eventName: 'cron.message',
+          eventData: { room: 'room1', message: 'ha' },
+          started: true,
+          tz: undefined
+        }
+      }
+      room.robot.brain.emit 'loaded'
+      room.robot.cron.loadAll()
+
+    afterEach ->
+      room.robot.brain.data.cron = { }
+      room.robot.cron.jobs = { }
+
+    context 'it fires a job on tick', ->
+      beforeEach ->
+        room.robot.cron.jobs.somejob.fireOnTick()
+      it 'should say something', ->
+        expect(hubotResponse(0)).to.eql 'ha'
+
+  # ---------------------------------------------------------------------------------
   context 'permissions system', ->
     beforeEach ->
       process.env.HUBOT_AUTH_ADMIN = 'admin_user'
@@ -630,9 +655,9 @@ describe 'cron_events module', ->
         room.robot.brain.emit 'loaded'
         room.robot.cron.loadAll()
 
-        afterEach ->
-          room.robot.brain.data.cron = { }
-          room.robot.cron.jobs = { }
+      afterEach ->
+        room.robot.brain.data.cron = { }
+        room.robot.cron.jobs = { }
 
       context 'and user is not admin', ->
         hubot 'cron stop somejob', 'user'

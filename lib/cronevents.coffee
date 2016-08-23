@@ -146,7 +146,7 @@ class CronEvents
 
   _valid: (period, tz) ->
     try
-      new CronJob period, ( -> { }), null, false, tz
+      new CronJob period, null, null, false, tz
       return true
     catch e
       @robot.logger.error e
