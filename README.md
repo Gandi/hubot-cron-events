@@ -65,7 +65,7 @@ Commands prefixed by `.cron` are here taking in account we use the `.` as hubot 
             .cron blah room = shell
             .cron blah message = tick tack
         or
-        .cron blah */5 * * * * * cron.message room=shell message=tick tack
+        .cron blah */5 * * * * * cron.message with room=shell message=tick tack
         .cron start blah
             activates the job, which will run every 5 seconds
         .cron blah * * * * * 
