@@ -1,6 +1,11 @@
 Hubot-cron-events Changelog
 ==========================
 
+### 0.2.1 - 2016-08-23
+- add tz in the list display
+- make list display look like the syntax of addJob
+- actually .cron status is still there
+
 ### 0.2.0 - 2016-08-23
 - add a way to include data params in job creation using 'with'
 - merge .cron show and .cron list

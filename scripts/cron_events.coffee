@@ -105,12 +105,15 @@ module.exports = (robot) ->
               '(active)'
             else
               '(inactive)'
+            tz = ''
+            if v.tz?
+              tz = " #{v.tz}"
             eventdata = ''
             if Object.keys(v.eventData).length > 0
               eventdata = 'with '
               for datakey, datavalue of v.eventData
-                eventdata += "#{datakey}='#{datavalue}' "
-            res.send "'#{k}' is #{v.cronTime} #{v.eventName} #{eventdata}#{status}"
+                eventdata += "#{datakey}=#{datavalue} "
+            res.send "cron #{k} #{v.cronTime} #{v.eventName}#{tz} #{eventdata}#{status}"
       res.finish()
 
   #   hubot cron <name> <key> <value>

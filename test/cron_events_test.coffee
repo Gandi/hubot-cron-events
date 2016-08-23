@@ -127,7 +127,8 @@ describe 'cron_events module', ->
         expect(room.robot.brain.data.cron.somejob.eventData.param2).to.eql 'another'
 
     context 'with a valid period and some data with spaces', ->
-      hubot 'cron somejob 0 0 1 1 * some.event UTC with param1=something and whatever param2=another'
+      hubot 'cron somejob 0 0 1 1 * some.event UTC ' +
+            'with param1=something and whatever param2=another'
       it 'should not complain about the period syntax', ->
         expect(hubotResponse()).
           to.eql 'The job somejob is created. It will stay paused until you start it.'
@@ -359,7 +360,7 @@ describe 'cron_events module', ->
       context 'and job exists', ->
         hubot 'cron info somejob'
         it 'should provide proper information about that job', ->
-          expect(hubotResponse()).to.eql "'somejob' is 0 0 1 1 * event1 (inactive)"
+          expect(hubotResponse()).to.eql 'cron somejob 0 0 1 1 * event1 (inactive)'
 
     context 'and this job has event data', ->
       beforeEach ->
@@ -385,7 +386,7 @@ describe 'cron_events module', ->
         hubot 'cron info somejob'
         it 'should provide proper information about that job', ->
           expect(hubotResponse()).
-            to.eql "'somejob' is 0 0 1 1 * event1 with key1='value1' key2='value2' (inactive)"
+            to.eql 'cron somejob 0 0 1 1 * event1 with key1=value1 key2=value2 (inactive)'
 
 
     context 'and this job has event data and timezone', ->
@@ -398,7 +399,7 @@ describe 'cron_events module', ->
               key1: 'value1',
               key2: 'value2'
             },
-            started: false,
+            started: true,
             tz: 'UTC'
           }
         }
@@ -412,7 +413,7 @@ describe 'cron_events module', ->
         hubot 'cron info somejob'
         it 'should provide proper information about that job', ->
           expect(hubotResponse()).
-            to.eql "'somejob' is 0 0 1 1 * event1 with key1='value1' key2='value2' (inactive)"
+            to.eql 'cron somejob 0 0 1 1 * event1 UTC with key1=value1 key2=value2 (active)'
 
   # ---------------------------------------------------------------------------------
   context 'user deletes a job', ->
@@ -488,22 +489,22 @@ describe 'cron_events module', ->
     context 'and there is one match', ->
       hubot 'cron list somejob'
       it 'should show the matching job', ->
-        expect(hubotResponse()).to.eql "'somejob' is 0 0 1 1 * event1 (inactive)"
+        expect(hubotResponse()).to.eql 'cron somejob 0 0 1 1 * event1 (inactive)'
         expect(hubotResponse(2)).to.be.undefined
 
     context 'and there is two matches', ->
       hubot 'cron list ome'
       it 'should show the matching jobs', ->
-        expect(hubotResponse()).to.eql "'somejob' is 0 0 1 1 * event1 (inactive)"
-        expect(hubotResponse(2)).to.eql "'someotherjob' is 0 0 1 1 * event1 (inactive)"
+        expect(hubotResponse()).to.eql 'cron somejob 0 0 1 1 * event1 (inactive)'
+        expect(hubotResponse(2)).to.eql 'cron someotherjob 0 0 1 1 * event1 (inactive)'
         expect(hubotResponse(3)).to.be.undefined
 
     context 'and it gets all jobs', ->
       hubot 'cron list'
       it 'should show the whole list of jobs', ->
-        expect(hubotResponse()).to.eql "'somejob' is 0 0 1 1 * event1 (inactive)"
-        expect(hubotResponse(2)).to.eql "'someotherjob' is 0 0 1 1 * event1 (inactive)"
-        expect(hubotResponse(3)).to.eql "'anotherjob' is 0 0 1 1 * event1 (active)"
+        expect(hubotResponse()).to.eql 'cron somejob 0 0 1 1 * event1 (inactive)'
+        expect(hubotResponse(2)).to.eql 'cron someotherjob 0 0 1 1 * event1 (inactive)'
+        expect(hubotResponse(3)).to.eql 'cron anotherjob 0 0 1 1 * event1 (active)'
         expect(hubotResponse(4)).to.be.undefined
 
   # ---------------------------------------------------------------------------------
