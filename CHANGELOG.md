@@ -1,7 +1,8 @@
 Hubot-cron-events Changelog
 ==========================
 
-### 0.1.4 - wip
+### 0.2.0 - 2016-08-23
+- add a way to include data params in job creation using 'with'
 - merge .cron show and .cron list
 - add complete information in .cron show/list
 - remove obsolete .cron status

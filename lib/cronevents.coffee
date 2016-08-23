@@ -43,7 +43,7 @@ class CronEvents
       params.tz = job.tz
     return new CronJob(params)
 
-  addJob: (name, period, eventName, tz, cb) ->
+  addJob: (name, period, eventName, tz, args, cb) ->
     if @_valid period, tz
       if @data[name]?
         @data[name].cronTime = period
@@ -51,6 +51,9 @@ class CronEvents
           @data[name].eventName = eventName
         if tz?
           @data[name].tz = tz
+        if args isnt { }
+          for k, v of args
+            @data[name].eventData[k] = v
         if @jobs[name]?
           @_stop name
           @_start name
@@ -59,7 +62,7 @@ class CronEvents
         @data[name] = {
           cronTime: period,
           eventName: eventName,
-          eventData: { },
+          eventData: args,
           started: false,
           tz: tz
         }

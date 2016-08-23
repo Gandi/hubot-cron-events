@@ -40,14 +40,21 @@ module.exports = (robot) ->
   robot.respond new RegExp(
     'cron ([^ ]+) ' +
     '([-/0-9\*,]+ [-/0-9\*,]+ [-/0-9\*,]+ [-/0-9\*,]+ [-/0-9\*,]+(?: [-/0-9\*,]+)?)' +
-    '(?: ([-_a-zA-Z0-9\.]+))?(?: ([^ ]+))?'
+    '(?: ([-_a-zA-Z0-9\.]+))(?: ([^ ]+))?' +
+    '(?: with ([-_a-zA-Z0-9]+=.+)+)? *$'
     ), (res) ->
       withPermission res, ->
         name = res.match[1]
         period = res.match[2]
         eventName = res.match[3]
         tz = res.match[4]
-        cron.addJob name, period, eventName, tz, (so) ->
+        args = { }
+        if res.match[5]?
+          keys = res.match[5].split(/\=[^=]*(?: |$)/)[0...-1]
+          values = res.match[5].split(/(?:(?:^| )[-_a-zA-Z0-9]+)=/)[1..]
+          for i, k of keys
+            args[k] = values[i]
+        cron.addJob name, period, eventName, tz, args, (so) ->
           res.send so.message
         res.finish()
 

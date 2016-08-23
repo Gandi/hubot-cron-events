@@ -40,16 +40,23 @@ Commands prefixed by `.cron` are here taking in account we use the `.` as hubot 
     .cron version
         gives the version of the hubot-cron-events package loaded
 
-    .cron <name> <period> [<eventname>] [<tz>]
+    .cron <name> <period> <eventname>
+    .cron <name> <period> <eventname> <tz>
+    .cron <name> <period> <eventname> [<tz>] with param1=value1
+    .cron <name> <period> <eventname> [<tz>] with param1=value1 param2=value2
+    .cron <name> <period> <eventname> [<tz>] with param1=long value with spaces param2=value2
         will create or update a job with unique identifier <name>
         the <period> has to match a valid cronjob syntax of type * * * * *
         if 6 items are provided (ie. * * * * * *), the first one will be the seconds
         the optional <tz> will be applied if provided
         if no eventname is provided, the job will not emit anything
 
-        Note that this also can be used to modify an existing job
-        in such case, the job data will remain the same
-        and if the eventname is omitted it will not be changed
+        This also can be used to modify an existing job.
+        If the tz and data are omitted they will not be changed
+
+        Data params can be provided if you add 'with' and a list
+        of attributions. There is a drawback, which is that in the
+        current implementation, the values can't contain an equal sign ('=')
 
         example:
         .cron blah */5 * * * * * cron.message
