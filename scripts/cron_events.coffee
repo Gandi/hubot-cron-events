@@ -48,15 +48,28 @@ module.exports = (robot) ->
         period = res.match[2]
         eventName = res.match[3]
         tz = res.match[4]
-        args = { }
-        if res.match[5]?
-          keys = res.match[5].split(/\=[^=]*(?: |$)/)[0...-1]
-          values = res.match[5].split(/(?:(?:^| )[-_a-zA-Z0-9]+)=/)[1..]
-          for i, k of keys
-            args[k] = values[i]
-        cron.addJob name, period, eventName, tz, args, (so) ->
+        options = res.match[5]
+        cron.addJob name, period, eventName, tz, options, (so) ->
           res.send so.message
         res.finish()
+
+  # #   hubot cron <name> at <date> <event> [<tz>]
+  # robot.respond new RegExp(
+  #   'cron ([^ ]+) (?:at|on) (.*)' +
+  #   '(?: in ([^ ]+))?' +
+  #   '(?: is ([-_a-zA-Z0-9\.]+))?' +
+  #   '(?: with ([-_a-zA-Z0-9]+=.+)+)? *$'
+  #   ), (res) ->
+  #     withPermission res, ->
+  #       name = res.match[1]
+  #       at = res.match[2]
+  #       tz = res.match[3]
+  #       eventName = res.match[4]
+  #       args = cron._extractKeys res.match[5]
+  #       options = res.match[5]
+  #       cron.addJob name, period, eventName, tz, options, (so) ->
+  #         res.send so.message
+  #       res.finish()
 
   #   hubot cron start <name>
   robot.respond /cron (?:start|resume) ([^ ]+)$/, (res) ->

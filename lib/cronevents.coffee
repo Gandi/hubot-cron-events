@@ -43,8 +43,9 @@ class CronEvents
       params.tz = job.tz
     return new CronJob(params)
 
-  addJob: (name, period, eventName, tz, args, cb) ->
+  addJob: (name, period, eventName, tz, options, cb) ->
     if @_valid period, tz
+      args = @_extractKeys(options)
       if @data[name]?
         @data[name].cronTime = period
         if eventName?
@@ -151,6 +152,15 @@ class CronEvents
     catch e
       @robot.logger.error e
       return false
+
+  _extractKeys: (str) ->
+    args = { }
+    if str?
+      keys = str.split(/\=[^=]*(?: |$)/)[0...-1]
+      values = str.split(/(?:(?:^| )[-_a-zA-Z0-9]+)=/)[1..]
+      for i, k of keys
+        args[k] = values[i]
+    args
 
 
 
