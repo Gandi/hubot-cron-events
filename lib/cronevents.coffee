@@ -1,13 +1,5 @@
 # Description:
-#   requests Phabricator Conduit api
-#
-# Dependencies:
-#
-# Configuration:
-#  PHABRICATOR_URL
-#  PHABRICATOR_API_KEY
-#  PHABRICATOR_BOT_PHID
-#  PHABRICATOR_TRUSTED_USERS
+#   cron events library
 #
 # Author:
 #   mose
