@@ -217,8 +217,8 @@ describe 'cron_events module', ->
 
     context 'but job is not known', ->
       hubot 'cron start nojob'
-      it 'should complain about the inexistence of that job', ->
-        expect(hubotResponse()).to.eql 'startJob: There is no such job named nojob'
+      it 'should complain about the nonexistence of that job', ->
+        expect(hubotResponse()).to.eql 'There is no such job named nojob.'
       it 'should not have added a job in the jobs queue', ->
         expect(room.robot.cron.jobs.somejob).not.to.be.defined
 
@@ -258,14 +258,14 @@ describe 'cron_events module', ->
 
     context 'but job is not known', ->
       hubot 'cron stop nojob'
-      it 'should complain about the inexistence of that job', ->
-        expect(hubotResponse()).to.eql 'stopJob: There is no such job named nojob'
+      it 'should complain about the nonexistence of that job', ->
+        expect(hubotResponse()).to.eql 'There is no such job named nojob.'
       it 'should not have added a job in the jobs queue', ->
         expect(room.robot.cron.jobs.somejob).not.to.be.defined
 
     context 'and job exists', ->
       hubot 'cron stop somejob'
-      it 'should not complain about the inexistence of that job', ->
+      it 'should not complain about the nonexistence of that job', ->
         expect(hubotResponse()).to.eql 'The job somejob is now paused.'
       it 'should change brain to record it\'s not started', ->
         expect(room.robot.brain.data.cron.somejob.started).to.be.false
@@ -298,21 +298,21 @@ describe 'cron_events module', ->
 
     context 'but job is not known', ->
       hubot 'cron status nojob'
-      it 'should complain about the inexistence of that job', ->
-        expect(hubotResponse()).to.eql 'statusJob: There is no such job named nojob'
+      it 'should complain about the nonexistence of that job', ->
+        expect(hubotResponse()).to.eql 'There is no such job named nojob.'
       it 'should not be in the jobs queue', ->
         expect(room.robot.cron.jobs.nojob).to.be.undefined
 
     context 'and job exists and is running', ->
       hubot 'cron status other'
-      it 'should not complain about the inexistence of that job', ->
+      it 'should not complain about the nonexistence of that job', ->
         expect(hubotResponse()).to.eql 'The job other is currently running.'
       it 'should not have added a job in the jobs queue', ->
         expect(room.robot.cron.jobs.other).to.be.defined
 
     context 'and job exists and is paused', ->
       hubot 'cron status somejob'
-      it 'should not complain about the inexistence of that job', ->
+      it 'should not complain about the nonexistence of that job', ->
         expect(hubotResponse()).to.eql 'The job somejob is paused.'
       it 'should not have added a job in the jobs queue', ->
         expect(room.robot.cron.jobs.somejob).to.be.undefined
@@ -332,7 +332,7 @@ describe 'cron_events module', ->
       context 'and user wants the whoe list', ->
         hubot 'cron info'
         it 'should complain that there is no job defined', ->
-          expect(hubotResponse()).to.eql 'The is no job defined.'
+          expect(hubotResponse()).to.eql 'There is no job defined.'
 
     context 'and this job has no event data', ->
       beforeEach ->
@@ -354,8 +354,8 @@ describe 'cron_events module', ->
 
       context 'but job is not known', ->
         hubot 'cron info nojob'
-        it 'should complain about the inexistence of that job', ->
-          expect(hubotResponse()).to.eql 'The is no job matching nojob'
+        it 'should complain about the nonexistence of that job', ->
+          expect(hubotResponse()).to.eql 'There is no job matching nojob.'
 
       context 'and job exists', ->
         hubot 'cron info somejob'
@@ -436,8 +436,8 @@ describe 'cron_events module', ->
 
     context 'but job is not known', ->
       hubot 'cron delete nojob'
-      it 'should complain about the inexistence of that job', ->
-        expect(hubotResponse()).to.eql 'deleteJob: There is no such job named nojob'
+      it 'should complain about the nonexistence of that job', ->
+        expect(hubotResponse()).to.eql 'There is no such job named nojob.'
 
     context 'and job exists', ->
       hubot 'cron delete somejob'
@@ -484,7 +484,7 @@ describe 'cron_events module', ->
     context 'but there is no match', ->
       hubot 'cron list nojob'
       it 'should warn that there are no matches', ->
-        expect(hubotResponse()).to.eql 'The is no job matching nojob'
+        expect(hubotResponse()).to.eql 'There is no job matching nojob.'
 
     context 'and there is one match', ->
       hubot 'cron list somejob'
@@ -528,14 +528,14 @@ describe 'cron_events module', ->
 
     context 'but job is not known', ->
       hubot 'cron nojob key = param'
-      it 'should complain about the inexistence of that job', ->
-        expect(hubotResponse()).to.eql 'addData: There is no such job named nojob'
+      it 'should complain about the nonexistence of that job', ->
+        expect(hubotResponse()).to.eql 'There is no such job named nojob.'
 
     context 'and job exists', ->
       hubot 'cron somejob key = param'
       it 'should say that param is added to data', ->
         expect(hubotResponse()).to.eql 'The key key is now defined for job somejob.'
-      it 'should set the key in the brain for taht job', ->
+      it 'should set the key in the brain for that job', ->
         expect(room.robot.brain.data.cron.somejob.eventData).
           to.eql { key: 'param' }
       it 'should keep the job running', ->
@@ -567,8 +567,8 @@ describe 'cron_events module', ->
 
     context 'but job is not known', ->
       hubot 'cron nojob drop key'
-      it 'should complain about the inexistence of that job', ->
-        expect(hubotResponse()).to.eql 'dropData: There is no such job named nojob'
+      it 'should complain about the nonexistence of that job', ->
+        expect(hubotResponse()).to.eql 'There is no such job named nojob.'
 
     context 'and job exists', ->
       hubot 'cron somejob drop key'
@@ -663,7 +663,7 @@ describe 'cron_events module', ->
         hubot 'cron stop somejob', 'user'
         it 'should deny permission to the user', ->
           expect(hubotResponse()).to.eql "@user You don't have permission to do that."
-        it 'should change brain to record it\'s not started', ->
+        it 'should keep the brain with the started status', ->
           expect(room.robot.brain.data.cron.somejob.started).to.be.true
         it 'should not have added a job in the jobs queue', ->
           expect(room.robot.cron.jobs.somejob).to.be.defined

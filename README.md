@@ -10,8 +10,9 @@ Hubot Cron Events Plugin
 
 This plugin is a generic event emitter scheduled using cron job. It's very similar to [hubot-cron](https://github.com/miyagawa/hubot-cron), but instead of sending messages it emits events.
 
-By itself, this plugin is useless, but it's very handy when combined with other plugins that will receive the emitted events.
+This plugin can be very handy when combined with other plugins that will receive the emitted events.
 
+There is another similar plugin named [hubot-at-events](https://github.com/Gandi/hubot-at-events) that applies the same principle for one-time actions at given dates.
 
 Installation
 --------------

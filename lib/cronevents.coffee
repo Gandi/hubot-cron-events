@@ -64,39 +64,31 @@ class CronEvents
       cb { message: "Sorry, '#{period}' is not a valid pattern." }
 
   startJob: (name, cb) ->
-    if @data[name]?
+    @withJob name, cb, =>
       if @jobs[name]?
         @_stop name
       @_start name
       cb { message: "The job #{name} is now in service." }
-    else
-      cb { message: "startJob: There is no such job named #{name}" }
 
   stopJob: (name, cb) ->
-    if @data[name]?
+    @withJob name, cb, =>
       @_stop name
       cb { message: "The job #{name} is now paused." }
-    else
-      cb { message: "stopJob: There is no such job named #{name}" }
 
   statusJob: (name, cb) ->
-    if @data[name]?
+    @withJob name, cb, =>
       if @jobs[name]?
         cb { message: "The job #{name} is currently running." }
       else
         cb { message: "The job #{name} is paused." }
-    else
-      cb { message: "statusJob: There is no such job named #{name}" }
 
   deleteJob: (name, cb) ->
-    if @data[name]?
-      delete @data[name]
+    @withJob name, cb, =>
       if @jobs[name]?
         @jobs[name].stop()
         delete @jobs[name]
+      delete @data[name]
       cb { message: "The job #{name} is deleted." }
-    else
-      cb { message: "deleteJob: There is no such job named #{name}" }
 
   listJob: (filter, cb) ->
     res = { }
@@ -106,25 +98,27 @@ class CronEvents
     cb res
 
   addData: (name, key, value, cb) ->
-    if @data[name]?
+    @withJob name, cb, =>
       @data[name].eventData[key] = value
       if @jobs[name]?
         @_stop name
         @_start name
       cb { message: "The key #{key} is now defined for job #{name}." }
-    else
-      cb { message: "addData: There is no such job named #{name}" }
 
   dropData: (name, key, cb) ->
-    if @data[name]?
+    @withJob name, cb, =>
       if @data[name].eventData[key]?
         delete @data[name].eventData[key]
       if @jobs[name]?
         @_stop name
         @_start name
       cb { message: "The key #{key} is now removed from job #{name}." }
+
+  withJob: (name, cb, docb) ->
+    if @data[name]?
+      docb()
     else
-      cb { message: "dropData: There is no such job named #{name}" }
+      cb { message: "There is no such job named #{name}." }
 
   _start: (name) ->
     @jobs[name] = @loadJob @data[name]

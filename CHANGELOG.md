@@ -1,6 +1,10 @@
 Hubot-cron-events Changelog
 ==========================
 
+### 1.0.0 - 2016-09-01
+- refactor job existence function
+- fix some english typoes in messages
+
 ### 0.2.1 - 2016-08-23
 - add tz in the list display
 - make list display look like the syntax of addJob

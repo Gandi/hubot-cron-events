@@ -91,9 +91,9 @@ module.exports = (robot) ->
       cron.listJob filter, (so) ->
         if Object.keys(so).length is 0
           if filter?
-            res.send "The is no job matching #{filter}"
+            res.send "There is no job matching #{filter}."
           else
-            res.send 'The is no job defined.'
+            res.send 'There is no job defined.'
         else
           for k, v of so
             status = if v.started
