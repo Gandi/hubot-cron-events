@@ -23,7 +23,7 @@ module.exports = (robot) ->
   robot.cron = cron
 
   withPermission = (res, cb) ->
-    user = robot.brain.userForName(res.envelope.user.name) or res.envelope.user.name
+    user = robot.brain.userForName(res.envelope.user.name) or res.envelope.user
     if robot.auth? and not robot.auth?.isAdmin(user)
       res.reply "You don't have permission to do that."
       res.finish()
