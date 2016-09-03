@@ -22,10 +22,6 @@
   "dependencies": {
     "cron": "^1.1.0"
   },
-  "peerDependencies": {
-    "hubot": "2.x",
-    "coffee-script": "~1.6"
-  },
   "devDependencies": {
     "chai": "^2.1.1",
     "codeclimate-test-reporter": "^0.3.3",
